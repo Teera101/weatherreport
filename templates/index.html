@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>พยากรณ์สภาพอากาศ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h2>พยากรณ์สภาพอากาศ</h2>
+    <form action="/predict" method="post">
+        <label>ปริมาณน้ำฝน (Precipitation) [mm]:</label>
+        <input type="number" name="precipitation" step="0.1" required>
+
+        <label>อุณหภูมิสูงสุด (Temp Max) [°C]:</label>
+        <input type="number" name="temp_max" step="0.1" required>
+
+        <label>อุณหภูมิต่ำสุด (Temp Min) [°C]:</label>
+        <input type="number" name="temp_min" step="0.1" required>
+
+        <label>ความเร็วลม (Wind Speed) [m/s]:</label>
+        <input type="number" name="wind" step="0.1" required>
+
+        <button type="submit">ทำนาย</button>
+    </form>
+
+    <h3>{{ prediction_text }}</h3>
+</body>
+</html>
