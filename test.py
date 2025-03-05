@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import time
 import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split, cross_val_score, RandomizedSearchCV
+from sklearn.model_selection import train_test_split, cross_val_score, GridSearchCV, RandomizedSearchCV
 from sklearn.preprocessing import LabelEncoder
 from sklearn.ensemble import VotingClassifier, RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier
 from sklearn.linear_model import LogisticRegression
@@ -12,22 +12,21 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score
 import joblib
 
-file_path = "seattle-weather2.csv"
+file_path = "penguins.csv"
 df = pd.read_csv(file_path)
 df.dropna(inplace=True)
 
 label_encoders = {}
-for col in ["weather"]:
+for col in ["sex", "species"]:
     le = LabelEncoder()
     df[col] = le.fit_transform(df[col])
     label_encoders[col] = le  
 
-X = df.drop(columns=["weather"])
-y = df["weather"]
+X = df.drop(columns=["species"])
+y = df["species"]
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# กำหนดโมเดลที่มีอยู่แล้ว
 models = {
     "Logistic Regression": LogisticRegression(solver='liblinear', random_state=42),
     "k-Nearest Neighbors": KNeighborsClassifier(n_neighbors=5),
@@ -37,26 +36,6 @@ models = {
     "Genetic Algorithm (MLP)": MLPClassifier(hidden_layer_sizes=(10, 5), max_iter=500, random_state=42),
     "AdaBoost": AdaBoostClassifier(n_estimators=50, random_state=42)
 }
-
-# เพิ่มโมเดล Random Search (ปรับจูนพารามิเตอร์สำหรับ RandomForestClassifier)
-param_dist = {
-    'n_estimators': [50, 100, 200, 300],
-    'max_depth': [None, 10, 20, 30, 40],
-    'min_samples_split': [2, 5, 10],
-    'min_samples_leaf': [1, 2, 4],
-    'bootstrap': [True, False]
-}
-
-random_search = RandomizedSearchCV(
-    estimator=RandomForestClassifier(random_state=42),
-    param_distributions=param_dist,
-    n_iter=10,
-    cv=5,
-    random_state=42,
-    n_jobs=-1
-)
-
-models["Random Search"] = random_search
 
 results = {}
 train_times = {}
@@ -80,10 +59,6 @@ for name, model in models.items():
     cv_scores[name] = mean_cv_score
 
     print(f"{name} | Train Time: {train_time:.4f} sec | Accuracy (Test Set): {accuracy:.4f} | Mean CV Score: {mean_cv_score:.4f}")
-    
-    # สำหรับ Random Search ให้แสดงพารามิเตอร์ที่ดีที่สุด
-    if name == "Random Search":
-        print("Best Parameters:", model.best_params_)
 
 voting_clf = VotingClassifier(
     estimators=[(name, models[name]) for name in models],
@@ -103,19 +78,36 @@ cv_scores["Voting Classifier"] = np.mean(cross_val_score(voting_clf, X_train, y_
 
 print(f"Voting Classifier | Train Time: {train_times['Voting Classifier']:.4f} sec | Accuracy: {voting_accuracy:.4f} | Mean CV Score: {cv_scores['Voting Classifier']:.4f}")
 
-max_accuracy = max(results.values())
-best_models = [name for name, acc in results.items() if acc == max_accuracy]
+param_grid_rf = {
+    'n_estimators': [50, 100, 200],
+    'max_depth': [10, 20, None],
+    'min_samples_split': [2, 5, 10],
+    'min_samples_leaf': [1, 2, 4]
+}
 
-if len(best_models) > 1:
-    best_models = [m for m in best_models if m != "Voting Classifier"]
-    best_model = min(best_models, key=lambda m: train_times[m]) if best_models else "Voting Classifier"
-else:
-    best_model = best_models[0]
+grid_search_rf = GridSearchCV(RandomForestClassifier(random_state=42), param_grid_rf, cv=5, scoring='accuracy', n_jobs=-1)
+grid_search_rf.fit(X_train, y_train)
 
-final_model = {"model": models[best_model] if best_model != "Voting Classifier" else voting_clf, "label_encoders": label_encoders}
+print("Best Parameters (Random Forest - Grid Search):", grid_search_rf.best_params_)
+print("Best Accuracy (Random Forest - Grid Search):", grid_search_rf.best_score_)
+
+param_dist_knn = {
+    'n_neighbors': list(range(1, 21)),
+    'weights': ['uniform', 'distance'],
+    'p': [1, 2]
+}
+
+random_search_knn = RandomizedSearchCV(KNeighborsClassifier(), param_distributions=param_dist_knn, n_iter=10, cv=5, scoring='accuracy', n_jobs=-1, random_state=42)
+random_search_knn.fit(X_train, y_train)
+
+print("Best Parameters (KNN - Random Search):", random_search_knn.best_params_)
+print("Best Accuracy (KNN - Random Search):", random_search_knn.best_score_)
+
+best_model_name = max(results, key=results.get)
+final_model = {"model": models[best_model_name] if best_model_name != "Voting Classifier" else voting_clf, "label_encoders": label_encoders}
 joblib.dump(final_model, "best_model.pkl")
 
-print(f"Best Model: {best_model} | Accuracy: {results[best_model]:.4f}")
+print(f"Best Model: {best_model_name} | Accuracy: {results[best_model_name]:.4f}")
 
 plt.figure(figsize=(12, 6))  
 plt.bar(results.keys(), results.values(), color='skyblue')
