@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>พยากรณ์สภาพอากาศ</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <h2>พยากรณ์สภาพอากาศ</h2>
+    <form id="predict-form">
+        <label>ปริมาณน้ำฝน (Precipitation) [mm]:</label>
+        <input type="number" id="precipitation" name="precipitation" step="0.1" required>
+
+        <label>อุณหภูมิสูงสุด (Temp Max) [°C]:</label>
+        <input type="number" id="temp_max" name="temp_max" step="0.1" required>
+
+        <label>อุณหภูมิต่ำสุด (Temp Min) [°C]:</label>
+        <input type="number" id="temp_min" name="temp_min" step="0.1" required>
+
+        <label>ความเร็วลม (Wind Speed) [m/s]:</label>
+        <input type="number" id="wind" name="wind" step="0.1" required>
+
+        <button type="submit">ทำนายผล</button>
+    </form>
+
+    <h3 id="result"></h3>
+
+    <script src="script.js" defer></script>
+
+    <img class="title-image" src="https://stickermirchi.com/wp-content/uploads/2023/06/T-Rex-Pixel-Sticker.png" alt="Title Image">
+        
+    <img class="nergigante-image" src="https://monsterhunterworld.wiki.fextralife.com/file/Monster-Hunter-World/mhw-nergigante_render_001.png" alt="Nergigante Image">
+
+</body>
+</html>

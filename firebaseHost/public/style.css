@@ -1,0 +1,124 @@
+body {
+    font-family: Arial, sans-serif;
+    /*background-color: #9200f4;*/
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;      
+    flex-direction: column;   
+    text-align: center;
+    background-image: url("https://i.gifer.com/CQx.gif");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+.background-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: contain; 
+    object-position: center;
+    z-index: -1; 
+    background-color: black;
+}
+
+
+h2 {
+    color: #020202;
+    font-size: 30px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    padding: 20px 35px;
+    border: 3px solid #292929;
+    display: inline-block;
+    border-radius: 7px;
+    background-color: rgba(255, 255, 255, 0.92);
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    margin-top: 95px;
+}
+
+form {
+    background: rgba(255, 255, 255, 0.922);
+    backdrop-filter: blur( 0px );
+    -webkit-backdrop-filter: blur( 0px );
+    padding: 17px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    width: 460px;  
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 3px solid #292929;
+    border-radius: 7px;
+}
+
+label {
+    color: #020202;
+    font-size: 20px;
+    font-weight: bold;
+    display: block;
+    width: 100%;  
+    text-align: left; 
+    margin-top: 8px;
+}
+
+input {
+    font-size: 15px;
+    margin: 5px 0;
+    padding: 8px;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    display: block;
+}
+
+button {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 10px;
+    width: 100%;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+button:hover {
+    background: #218838;
+}
+
+h3 {
+    display: none;
+    visibility: hidden;
+    color: #020202;
+    margin-top: 20px;
+    font-size: 23px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    padding: 20px 35px;
+    border: 3px solid #292929;
+    border-radius: 7px;
+    background-color: rgba(255, 255, 255, 0.92);
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+}
+
+
+.title-image {
+    width: 230px;
+    height: auto;
+    display: block;
+    margin: 20px auto;
+}
+
+.nergigante-image {
+    position: absolute;
+    left: 135px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 405px;
+    height: auto;
+}

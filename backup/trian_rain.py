@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import time
 import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split, cross_val_score, RandomizedSearchCV
+from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.preprocessing import LabelEncoder
 from sklearn.ensemble import VotingClassifier, RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier
 from sklearn.linear_model import LogisticRegression
@@ -27,7 +27,6 @@ y = df["weather"]
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# กำหนดโมเดลที่มีอยู่แล้ว
 models = {
     "Logistic Regression": LogisticRegression(solver='liblinear', random_state=42),
     "k-Nearest Neighbors": KNeighborsClassifier(n_neighbors=5),
@@ -37,26 +36,6 @@ models = {
     "Genetic Algorithm (MLP)": MLPClassifier(hidden_layer_sizes=(10, 5), max_iter=500, random_state=42),
     "AdaBoost": AdaBoostClassifier(n_estimators=50, random_state=42)
 }
-
-# เพิ่มโมเดล Random Search (ปรับจูนพารามิเตอร์สำหรับ RandomForestClassifier)
-param_dist = {
-    'n_estimators': [50, 100, 200, 300],
-    'max_depth': [None, 10, 20, 30, 40],
-    'min_samples_split': [2, 5, 10],
-    'min_samples_leaf': [1, 2, 4],
-    'bootstrap': [True, False]
-}
-
-random_search = RandomizedSearchCV(
-    estimator=RandomForestClassifier(random_state=42),
-    param_distributions=param_dist,
-    n_iter=10,
-    cv=5,
-    random_state=42,
-    n_jobs=-1
-)
-
-models["Random Search"] = random_search
 
 results = {}
 train_times = {}
@@ -80,10 +59,6 @@ for name, model in models.items():
     cv_scores[name] = mean_cv_score
 
     print(f"{name} | Train Time: {train_time:.4f} sec | Accuracy (Test Set): {accuracy:.4f} | Mean CV Score: {mean_cv_score:.4f}")
-    
-    # สำหรับ Random Search ให้แสดงพารามิเตอร์ที่ดีที่สุด
-    if name == "Random Search":
-        print("Best Parameters:", model.best_params_)
 
 voting_clf = VotingClassifier(
     estimators=[(name, models[name]) for name in models],
